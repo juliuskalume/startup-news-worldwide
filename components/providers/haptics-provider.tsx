@@ -2,7 +2,7 @@
 
 import { type PropsWithChildren, useEffect, useRef } from "react";
 import { Capacitor } from "@capacitor/core";
-import { Haptics } from "@capacitor/haptics";
+import { Haptics, ImpactStyle } from "@capacitor/haptics";
 
 const ICON_CLICK_SELECTOR = [
   "button",
@@ -13,6 +13,7 @@ const ICON_CLICK_SELECTOR = [
 ].join(",");
 
 const MIN_GAP_MS = 40;
+const HAPTIC_STYLE = ImpactStyle.Medium;
 
 export function HapticsProvider({ children }: PropsWithChildren): JSX.Element {
   const isNative = Capacitor.isNativePlatform();
@@ -23,7 +24,25 @@ export function HapticsProvider({ children }: PropsWithChildren): JSX.Element {
       return;
     }
 
-    const onClick = (event: MouseEvent): void => {
+    const triggerIconHaptic = (): void => {
+      const now = Date.now();
+      if (now - lastHapticAtRef.current < MIN_GAP_MS) {
+        return;
+      }
+      lastHapticAtRef.current = now;
+
+      void Haptics.impact({ style: HAPTIC_STYLE }).catch(() => undefined);
+    };
+
+    const onPointerDown = (event: PointerEvent): void => {
+      if (event.defaultPrevented) {
+        return;
+      }
+
+      if (event.pointerType === "mouse" && event.button !== 0) {
+        return;
+      }
+
       const target = event.target as HTMLElement | null;
       if (!target) {
         return;
@@ -43,18 +62,41 @@ export function HapticsProvider({ children }: PropsWithChildren): JSX.Element {
         return;
       }
 
-      const now = Date.now();
-      if (now - lastHapticAtRef.current < MIN_GAP_MS) {
-        return;
-      }
-      lastHapticAtRef.current = now;
-
-      void Haptics.selectionChanged().catch(() => undefined);
+      triggerIconHaptic();
     };
 
-    document.addEventListener("click", onClick, true);
+    const onKeyDown = (event: KeyboardEvent): void => {
+      if (event.defaultPrevented || (event.key !== "Enter" && event.key !== " ")) {
+        return;
+      }
+
+      const target = event.target as HTMLElement | null;
+      if (!target) {
+        return;
+      }
+
+      const interactive = target.closest(ICON_CLICK_SELECTOR);
+      if (!interactive) {
+        return;
+      }
+
+      const hasIcon =
+        interactive.matches("[data-haptic='true']") ||
+        interactive.classList.contains("material-symbols-outlined") ||
+        interactive.querySelector(".material-symbols-outlined") !== null;
+
+      if (!hasIcon) {
+        return;
+      }
+
+      triggerIconHaptic();
+    };
+
+    document.addEventListener("pointerdown", onPointerDown, true);
+    document.addEventListener("keydown", onKeyDown, true);
     return () => {
-      document.removeEventListener("click", onClick, true);
+      document.removeEventListener("pointerdown", onPointerDown, true);
+      document.removeEventListener("keydown", onKeyDown, true);
     };
   }, [isNative]);
 
