@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Merriweather } from "next/font/google";
 import "./globals.css";
+import { HapticsProvider } from "@/components/providers/haptics-provider";
 import { NavigationLoaderProvider } from "@/components/providers/navigation-loader-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ThemeScript } from "@/components/theme-script";
@@ -65,7 +66,9 @@ export default function RootLayout({
       </head>
       <body className="font-sans text-text-main antialiased">
         <ThemeProvider>
-          <NavigationLoaderProvider>{children}</NavigationLoaderProvider>
+          <HapticsProvider>
+            <NavigationLoaderProvider>{children}</NavigationLoaderProvider>
+          </HapticsProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -1,22 +1,40 @@
 package com.startupnews.worldwide;
 
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import androidx.activity.OnBackPressedCallback;
 import androidx.core.view.WindowCompat;
 import com.getcapacitor.Bridge;
 import com.getcapacitor.BridgeActivity;
+import java.util.Locale;
 
 public class MainActivity extends BridgeActivity {
-  private long lastBackPressTimeMs = 0L;
   private static final long BACK_EXIT_WINDOW_MS = 1500L;
+  private static final long BACK_NAV_SPINNER_MS = 1200L;
+  private static final String PRIMARY_APP_HOST = "news.sentirax.com";
+  private static final String FALLBACK_APP_HOST = "startup-news-worldwide.vercel.app";
+
+  private long lastBackPressTimeMs = 0L;
+  private FrameLayout nativeLoadingOverlay;
+  private final Handler uiHandler = new Handler(Looper.getMainLooper());
+  private Runnable hideOverlayRunnable;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
+    initNativeLoadingOverlay();
     configureWebViewForMobileViewport();
 
     getOnBackPressedDispatcher()
@@ -47,6 +65,16 @@ public class MainActivity extends BridgeActivity {
   public void onResume() {
     super.onResume();
     configureWebViewForMobileViewport();
+    hideNativeLoadingOverlay();
+  }
+
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    if (hideOverlayRunnable != null) {
+      uiHandler.removeCallbacks(hideOverlayRunnable);
+      hideOverlayRunnable = null;
+    }
   }
 
   private boolean navigateWebViewBackIfPossible() {
@@ -57,11 +85,95 @@ public class MainActivity extends BridgeActivity {
 
     WebView webView = bridge.getWebView();
     if (webView != null && webView.canGoBack()) {
+      if (shouldShowBackSpinner(webView.getUrl())) {
+        showNativeLoadingOverlay(BACK_NAV_SPINNER_MS);
+      }
       webView.goBack();
       return true;
     }
 
     return false;
+  }
+
+  private boolean shouldShowBackSpinner(String currentUrl) {
+    if (currentUrl == null || currentUrl.isEmpty()) {
+      return false;
+    }
+
+    try {
+      Uri uri = Uri.parse(currentUrl);
+      String host = uri.getHost();
+      if (host == null || host.isEmpty()) {
+        return false;
+      }
+
+      String normalizedHost = host.toLowerCase(Locale.US);
+      return !normalizedHost.contains(PRIMARY_APP_HOST)
+          && !normalizedHost.contains(FALLBACK_APP_HOST);
+    } catch (Exception ignored) {
+      return false;
+    }
+  }
+
+  private void initNativeLoadingOverlay() {
+    ViewGroup root = findViewById(android.R.id.content);
+    if (root == null || nativeLoadingOverlay != null) {
+      return;
+    }
+
+    nativeLoadingOverlay = new FrameLayout(this);
+    nativeLoadingOverlay.setVisibility(View.GONE);
+    nativeLoadingOverlay.setClickable(true);
+    nativeLoadingOverlay.setBackgroundColor(Color.parseColor("#6607101D"));
+
+    ProgressBar spinner = new ProgressBar(this);
+    spinner.setIndeterminate(true);
+
+    FrameLayout.LayoutParams spinnerParams =
+        new FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+    spinnerParams.gravity = Gravity.CENTER;
+    nativeLoadingOverlay.addView(spinner, spinnerParams);
+
+    FrameLayout.LayoutParams overlayParams =
+        new FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
+    root.addView(nativeLoadingOverlay, overlayParams);
+  }
+
+  private void showNativeLoadingOverlay(long durationMs) {
+    if (nativeLoadingOverlay == null) {
+      return;
+    }
+
+    nativeLoadingOverlay.setVisibility(View.VISIBLE);
+
+    if (hideOverlayRunnable != null) {
+      uiHandler.removeCallbacks(hideOverlayRunnable);
+    }
+
+    hideOverlayRunnable =
+        new Runnable() {
+          @Override
+          public void run() {
+            hideNativeLoadingOverlay();
+          }
+        };
+
+    uiHandler.postDelayed(hideOverlayRunnable, durationMs);
+  }
+
+  private void hideNativeLoadingOverlay() {
+    if (nativeLoadingOverlay == null) {
+      return;
+    }
+
+    if (hideOverlayRunnable != null) {
+      uiHandler.removeCallbacks(hideOverlayRunnable);
+      hideOverlayRunnable = null;
+    }
+
+    nativeLoadingOverlay.setVisibility(View.GONE);
   }
 
   private void configureWebViewForMobileViewport() {
