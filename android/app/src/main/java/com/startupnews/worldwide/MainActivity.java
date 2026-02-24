@@ -6,8 +6,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.Gravity;
+import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
@@ -29,6 +31,7 @@ public class MainActivity extends BridgeActivity {
   private FrameLayout nativeLoadingOverlay;
   private final Handler uiHandler = new Handler(Looper.getMainLooper());
   private Runnable hideOverlayRunnable;
+  private boolean nativeHapticsBridgeAttached = false;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -186,6 +189,8 @@ public class MainActivity extends BridgeActivity {
     if (webView == null) {
       return;
     }
+    attachNativeHapticsBridge(webView);
+    webView.setHapticFeedbackEnabled(true);
 
     WebSettings settings = webView.getSettings();
     // Respect responsive viewport meta tag and fit page width to device.
@@ -198,5 +203,51 @@ public class MainActivity extends BridgeActivity {
 
     webView.setHorizontalScrollBarEnabled(false);
     webView.setOverScrollMode(WebView.OVER_SCROLL_NEVER);
+  }
+
+  private void attachNativeHapticsBridge(WebView webView) {
+    if (nativeHapticsBridgeAttached) {
+      return;
+    }
+
+    webView.addJavascriptInterface(new NativeHapticsBridge(webView), "AndroidHaptics");
+    nativeHapticsBridgeAttached = true;
+  }
+
+  private final class NativeHapticsBridge {
+    private final WebView webView;
+
+    NativeHapticsBridge(WebView webView) {
+      this.webView = webView;
+    }
+
+    @JavascriptInterface
+    public void touchDown() {
+      perform(HapticFeedbackConstants.VIRTUAL_KEY);
+    }
+
+    @JavascriptInterface
+    public void touchUp() {
+      perform(HapticFeedbackConstants.VIRTUAL_KEY_RELEASE);
+    }
+
+    @JavascriptInterface
+    public void confirm() {
+      perform(HapticFeedbackConstants.CONFIRM);
+    }
+
+    @JavascriptInterface
+    public void reject() {
+      perform(HapticFeedbackConstants.REJECT);
+    }
+
+    private void perform(int feedbackConstant) {
+      runOnUiThread(
+          () -> {
+            if (webView != null) {
+              webView.performHapticFeedback(feedbackConstant);
+            }
+          });
+    }
   }
 }
