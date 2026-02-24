@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useNavigationLoader } from "@/components/providers/navigation-loader-provider";
 import { getDisplayImageUrl } from "@/lib/image";
 import { Article } from "@/lib/types";
 import { buildArticleHref, formatDate, formatRelativeTime } from "@/lib/utils";
@@ -9,10 +12,12 @@ type HeroArticleCardProps = {
 
 export function HeroArticleCard({ article }: HeroArticleCardProps): JSX.Element {
   const imageSrc = getDisplayImageUrl(article.imageUrl, article.title);
+  const { handleArticleClick } = useNavigationLoader();
 
   return (
     <Link
       href={buildArticleHref(article)}
+      onClick={handleArticleClick}
       className="group block overflow-hidden rounded-3xl border border-border-light bg-background-light shadow-soft transition duration-300 hover:-translate-y-0.5 hover:shadow-card dark:border-[#1f2a40] dark:bg-[#10192c]"
     >
       <div className="relative aspect-[16/10] w-full overflow-hidden rounded-t-3xl bg-gradient-to-br from-primary/20 via-primary-light to-background-subtle dark:from-[#1a2d47] dark:via-[#101c30] dark:to-[#0d1728]">

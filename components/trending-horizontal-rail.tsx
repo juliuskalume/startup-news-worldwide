@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useNavigationLoader } from "@/components/providers/navigation-loader-provider";
 import { Article } from "@/lib/types";
 import { buildArticleHref, formatRelativeTime } from "@/lib/utils";
 
@@ -9,6 +12,8 @@ type TrendingHorizontalRailProps = {
 export function TrendingHorizontalRail({
   items,
 }: TrendingHorizontalRailProps): JSX.Element | null {
+  const { handleArticleClick } = useNavigationLoader();
+
   if (!items.length) {
     return null;
   }
@@ -27,6 +32,7 @@ export function TrendingHorizontalRail({
           <Link
             key={article.id}
             href={buildArticleHref(article)}
+            onClick={handleArticleClick}
             className="group min-w-[210px] snap-start rounded-2xl border border-[#23334d] bg-[#121f34] p-3 transition hover:border-primary/60 xl:min-w-0 animate-riseIn"
             style={{ animationDelay: `${index * 60}ms` }}
           >

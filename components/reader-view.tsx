@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MaterialIcon } from "@/components/material-icon";
+import { useNavigationLoader } from "@/components/providers/navigation-loader-provider";
 import { getDisplayImageUrl } from "@/lib/image";
 import {
   getReaderTextSize,
@@ -46,6 +47,7 @@ function buildParagraphs(article: Article): string[] {
 
 export function ReaderView({ article, related }: ReaderViewProps): JSX.Element {
   const router = useRouter();
+  const { handleArticleClick } = useNavigationLoader();
   const [textSize, setTextSize] = useState<number>(getReaderTextSize());
   const [saved, setSaved] = useState<boolean>(isSavedArticle(article.id));
   const [shareHint, setShareHint] = useState<string>("");
@@ -184,6 +186,7 @@ export function ReaderView({ article, related }: ReaderViewProps): JSX.Element {
               <Link
                 key={nextArticle.id}
                 href={buildArticleHref(nextArticle)}
+                onClick={handleArticleClick}
                 className="block rounded-2xl border border-border-light bg-background-light p-3 shadow-soft transition hover:border-primary/50 dark:border-[#223148] dark:bg-[#10192c]"
               >
                 <p className="line-clamp-2 text-sm font-semibold text-text-main dark:text-[#e8f0ff]">

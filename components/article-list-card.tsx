@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { MaterialIcon } from "@/components/material-icon";
+import { useNavigationLoader } from "@/components/providers/navigation-loader-provider";
 import { getDisplayImageUrl } from "@/lib/image";
 import { Article } from "@/lib/types";
 import { buildArticleHref, formatRelativeTime } from "@/lib/utils";
@@ -16,12 +17,14 @@ export function ArticleListCard({
   onRemove,
 }: ArticleListCardProps): JSX.Element {
   const imageSrc = getDisplayImageUrl(article.imageUrl, article.title);
+  const { handleArticleClick } = useNavigationLoader();
 
   return (
     <article className="group rounded-3xl border border-border-light bg-background-light p-3 shadow-soft transition duration-300 hover:-translate-y-0.5 hover:shadow-card dark:border-[#1f2a40] dark:bg-[#10192c]">
       <div className="flex gap-3">
         <Link
           href={buildArticleHref(article)}
+          onClick={handleArticleClick}
           className="focus-ring flex min-w-0 flex-1 gap-3 rounded-2xl"
         >
           <div className="min-w-0 flex-1">

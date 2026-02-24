@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Merriweather } from "next/font/google";
 import "./globals.css";
+import { NavigationLoaderProvider } from "@/components/providers/navigation-loader-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ThemeScript } from "@/components/theme-script";
 
@@ -40,6 +41,12 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>): JSX.Element {
@@ -57,7 +64,9 @@ export default function RootLayout({
         <ThemeScript />
       </head>
       <body className="font-sans text-text-main antialiased">
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <NavigationLoaderProvider>{children}</NavigationLoaderProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
