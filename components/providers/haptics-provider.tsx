@@ -2,7 +2,7 @@
 
 import { type PropsWithChildren, useEffect, useRef } from "react";
 import { Capacitor } from "@capacitor/core";
-import { Haptics, ImpactStyle } from "@capacitor/haptics";
+import { Haptics } from "@capacitor/haptics";
 
 const ICON_CLICK_SELECTOR = [
   "button",
@@ -13,14 +13,6 @@ const ICON_CLICK_SELECTOR = [
 ].join(",");
 
 const MIN_GAP_MS = 40;
-
-function triggerVibrationFallback(): void {
-  if (typeof navigator === "undefined" || typeof navigator.vibrate !== "function") {
-    return;
-  }
-
-  navigator.vibrate(8);
-}
 
 export function HapticsProvider({ children }: PropsWithChildren): JSX.Element {
   const isNative = Capacitor.isNativePlatform();
@@ -57,10 +49,7 @@ export function HapticsProvider({ children }: PropsWithChildren): JSX.Element {
       }
       lastHapticAtRef.current = now;
 
-      void Haptics.impact({ style: ImpactStyle.Light }).catch(() => {
-        triggerVibrationFallback();
-      });
-      triggerVibrationFallback();
+      void Haptics.selectionChanged().catch(() => undefined);
     };
 
     document.addEventListener("click", onClick, true);
@@ -71,4 +60,3 @@ export function HapticsProvider({ children }: PropsWithChildren): JSX.Element {
 
   return <>{children}</>;
 }
-
