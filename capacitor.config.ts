@@ -2,7 +2,7 @@ import type { CapacitorConfig } from "@capacitor/cli";
 
 const serverUrl =
   process.env.CAP_SERVER_URL?.trim() ||
-  "http://10.0.2.2:3000";
+  "https://news.sentirax.com";
 
 const config: CapacitorConfig = {
   appId: "com.startupnews.worldwide",
@@ -17,4 +17,3 @@ const config: CapacitorConfig = {
 };
 
 export default config;
-

@@ -57,7 +57,7 @@ $env:CAP_SERVER_URL="http://192.168.1.50:3000"
 Production example:
 
 ```powershell
-$env:CAP_SERVER_URL="https://your-deployed-domain.com"
+$env:CAP_SERVER_URL="https://news.sentirax.com"
 ```
 
 ### 2) Sync and open Android project
