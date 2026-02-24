@@ -5,6 +5,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Toast;
 import androidx.activity.OnBackPressedCallback;
+import androidx.core.view.WindowCompat;
 import com.getcapacitor.Bridge;
 import com.getcapacitor.BridgeActivity;
 
@@ -15,6 +16,7 @@ public class MainActivity extends BridgeActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
     configureWebViewForMobileViewport();
 
     getOnBackPressedDispatcher()
@@ -74,8 +76,10 @@ public class MainActivity extends BridgeActivity {
     }
 
     WebSettings settings = webView.getSettings();
-    settings.setUseWideViewPort(false);
-    settings.setLoadWithOverviewMode(false);
+    // Respect responsive viewport meta tag and fit page width to device.
+    settings.setUseWideViewPort(true);
+    settings.setLoadWithOverviewMode(true);
+    settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);
     settings.setSupportZoom(false);
     settings.setBuiltInZoomControls(false);
     settings.setDisplayZoomControls(false);

@@ -19,7 +19,7 @@ export function TrendingHorizontalRail({
   }
 
   return (
-    <section className="rounded-3xl border border-[#263247] bg-[#0e1728] p-4 text-[#e6edfc] shadow-soft">
+    <section className="w-full min-w-0 overflow-hidden rounded-3xl border border-[#263247] bg-[#0e1728] p-4 text-[#e6edfc] shadow-soft">
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-sm font-semibold uppercase tracking-[0.14em] text-[#78c9ff]">
           Trending
@@ -27,7 +27,7 @@ export function TrendingHorizontalRail({
         <span className="text-xs text-[#90a7ce]">Dark mode rail</span>
       </div>
 
-      <div className="flex snap-x gap-3 overflow-x-auto pb-1 xl:grid xl:grid-cols-1 xl:overflow-visible xl:pb-0">
+      <div className="flex w-full min-w-0 snap-x gap-3 overflow-x-auto pb-1 xl:grid xl:grid-cols-1 xl:overflow-visible xl:pb-0">
         {items.slice(0, 8).map((article, index) => (
           <Link
             key={article.id}

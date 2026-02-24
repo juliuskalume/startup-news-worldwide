@@ -88,6 +88,7 @@ body {
 }
 
 .app-content-container {
+  box-sizing: border-box;
   margin-inline: auto;
   width: 100%;
   max-width: 1360px;

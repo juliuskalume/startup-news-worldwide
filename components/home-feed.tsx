@@ -129,10 +129,10 @@ export function HomeFeed(): JSX.Element {
         {!loading && !error && hero ? (
           <>
             <section className="grid gap-4 xl:grid-cols-[1.35fr_0.95fr]">
-              <div className="animate-riseIn">
+              <div className="min-w-0 animate-riseIn">
                 <HeroArticleCard article={hero} />
               </div>
-              <div className="animate-riseIn [animation-delay:100ms]">
+              <div className="min-w-0 animate-riseIn [animation-delay:100ms]">
                 <TrendingHorizontalRail items={items} />
               </div>
             </section>

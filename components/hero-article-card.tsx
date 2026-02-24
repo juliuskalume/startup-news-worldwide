@@ -18,7 +18,7 @@ export function HeroArticleCard({ article }: HeroArticleCardProps): JSX.Element 
     <Link
       href={buildArticleHref(article)}
       onClick={handleArticleClick}
-      className="group block overflow-hidden rounded-3xl border border-border-light bg-background-light shadow-soft transition duration-300 hover:-translate-y-0.5 hover:shadow-card dark:border-[#1f2a40] dark:bg-[#10192c]"
+      className="group block w-full overflow-hidden rounded-3xl border border-border-light bg-background-light shadow-soft transition duration-300 hover:-translate-y-0.5 hover:shadow-card dark:border-[#1f2a40] dark:bg-[#10192c]"
     >
       <div className="relative aspect-[16/10] w-full overflow-hidden rounded-t-3xl bg-gradient-to-br from-primary/20 via-primary-light to-background-subtle dark:from-[#1a2d47] dark:via-[#101c30] dark:to-[#0d1728]">
         <img
@@ -28,8 +28,8 @@ export function HeroArticleCard({ article }: HeroArticleCardProps): JSX.Element 
           loading="lazy"
         />
 
-        <div className="absolute inset-x-0 top-0 flex items-center justify-between p-3">
-          <span className="rounded-full bg-[#ff4b55] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+        <div className="absolute inset-x-0 top-0 flex items-center justify-between p-2.5 sm:p-3">
+          <span className="rounded-full bg-[#ff4b55] px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.14em] text-white sm:px-2.5 sm:py-1 sm:text-[10px]">
             Breaking
           </span>
           <span className="rounded-full bg-black/35 px-2 py-1 text-[11px] font-medium text-white backdrop-blur">
