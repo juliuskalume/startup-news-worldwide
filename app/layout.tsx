@@ -3,6 +3,7 @@ import { Inter, Merriweather } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ThemeScript } from "@/components/theme-script";
+import { SiteLoader } from "@/components/site-loader";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -57,7 +58,10 @@ export default function RootLayout({
         <ThemeScript />
       </head>
       <body className="font-sans text-text-main antialiased">
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <SiteLoader />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
