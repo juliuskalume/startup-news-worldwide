@@ -13,14 +13,15 @@ const ICON_CLICK_SELECTOR = [
 ].join(",");
 
 const MIN_GAP_MS = 40;
-const HAPTIC_STYLE = ImpactStyle.Medium;
+const HAPTIC_STYLE = ImpactStyle.Light;
 
 export function HapticsProvider({ children }: PropsWithChildren): JSX.Element {
   const isNative = Capacitor.isNativePlatform();
+  const shouldUseImpact = isNative && Capacitor.getPlatform() === "ios";
   const lastHapticAtRef = useRef<number>(0);
 
   useEffect(() => {
-    if (!isNative) {
+    if (!shouldUseImpact) {
       return;
     }
 
@@ -98,7 +99,7 @@ export function HapticsProvider({ children }: PropsWithChildren): JSX.Element {
       document.removeEventListener("pointerdown", onPointerDown, true);
       document.removeEventListener("keydown", onKeyDown, true);
     };
-  }, [isNative]);
+  }, [shouldUseImpact]);
 
   return <>{children}</>;
 }
