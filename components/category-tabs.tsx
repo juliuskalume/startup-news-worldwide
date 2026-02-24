@@ -16,7 +16,7 @@ export function CategoryTabs({
 }: CategoryTabsProps): JSX.Element {
   return (
     <div className="border-b border-border-light bg-background-light dark:border-[#1d283d] dark:bg-[#081120]">
-      <div className="mx-auto w-full max-w-3xl overflow-x-auto px-4 sm:px-6">
+      <div className="app-content-container overflow-x-auto">
         <div className="flex min-w-max items-center gap-5">
           {categories.map((category) => {
             const isActive = active === category;

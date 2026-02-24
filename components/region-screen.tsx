@@ -34,9 +34,9 @@ export function RegionScreen(): JSX.Element {
   }, [search]);
 
   return (
-    <div className="relative min-h-screen pb-24">
+    <div className="app-page-shell">
       <header className="sticky top-0 z-30 border-b border-border-light bg-background-light/90 backdrop-blur dark:border-[#1d283d] dark:bg-[#081120]/90">
-        <div className="mx-auto w-full max-w-3xl px-4 py-4 sm:px-6">
+        <div className="app-content-container safe-top-container">
           <h1 className="text-xl font-bold text-text-main dark:text-[#ebf2ff]">Region</h1>
           <p className="mt-1 text-sm text-text-muted dark:text-[#8fa8d2]">
             Feed region currently set to {selected}
@@ -57,8 +57,8 @@ export function RegionScreen(): JSX.Element {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-3xl px-4 py-4 sm:px-6">
-        <section className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <main className="app-content-container py-4 lg:py-6">
+        <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
           {filtered.map((country) => {
             const meta = COUNTRY_META[country];
             const active = selected === country;

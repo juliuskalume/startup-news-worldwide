@@ -31,9 +31,9 @@ export function SavedScreen(): JSX.Element {
   };
 
   return (
-    <div className="relative min-h-screen pb-24">
+    <div className="app-page-shell">
       <header className="sticky top-0 z-30 border-b border-border-light bg-background-light/90 backdrop-blur dark:border-[#1d283d] dark:bg-[#081120]/90">
-        <div className="mx-auto w-full max-w-3xl px-4 py-4 sm:px-6">
+        <div className="app-content-container safe-top-container">
           <h1 className="text-xl font-bold text-text-main dark:text-[#ebf2ff]">Saved Articles</h1>
           <p className="mt-1 text-sm text-text-muted dark:text-[#8fa8d2]">
             Stored on this device ({items.length})
@@ -41,9 +41,9 @@ export function SavedScreen(): JSX.Element {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-3xl px-4 py-4 sm:px-6">
+      <main className="app-content-container py-4 lg:py-6">
         {items.length ? (
-          <section className="space-y-3">
+          <section className="grid gap-3 md:grid-cols-2 2xl:grid-cols-3">
             {items.map((article) => (
               <ArticleListCard
                 key={article.id}

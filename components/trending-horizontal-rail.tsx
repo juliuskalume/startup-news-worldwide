@@ -22,12 +22,13 @@ export function TrendingHorizontalRail({
         <span className="text-xs text-[#90a7ce]">Dark mode rail</span>
       </div>
 
-      <div className="flex snap-x gap-3 overflow-x-auto pb-1">
-        {items.slice(0, 8).map((article) => (
+      <div className="flex snap-x gap-3 overflow-x-auto pb-1 xl:grid xl:grid-cols-1 xl:overflow-visible xl:pb-0">
+        {items.slice(0, 8).map((article, index) => (
           <Link
             key={article.id}
             href={buildArticleHref(article)}
-            className="group min-w-[210px] snap-start rounded-2xl border border-[#23334d] bg-[#121f34] p-3 transition hover:border-primary/60"
+            className="group min-w-[210px] snap-start rounded-2xl border border-[#23334d] bg-[#121f34] p-3 transition hover:border-primary/60 xl:min-w-0 animate-riseIn"
+            style={{ animationDelay: `${index * 60}ms` }}
           >
             <h3 className="line-clamp-2 text-sm font-semibold leading-5 text-[#e9f1ff] group-hover:text-[#88d6ff]">
               {article.title}

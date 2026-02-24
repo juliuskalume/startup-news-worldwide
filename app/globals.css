@@ -4,6 +4,10 @@
 
 :root {
   color-scheme: light;
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
 }
 
 .dark {
@@ -75,5 +79,61 @@ body {
 
 * {
   scrollbar-width: thin;
+}
+
+.app-content-container {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 1360px;
+  padding-inline-start: max(1rem, var(--safe-area-left));
+  padding-inline-end: max(1rem, var(--safe-area-right));
+}
+
+.app-page-shell {
+  position: relative;
+  min-height: 100svh;
+  padding-bottom: calc(5.75rem + var(--safe-area-bottom));
+}
+
+.app-page-shell-reader {
+  padding-bottom: calc(8.25rem + var(--safe-area-bottom));
+}
+
+.safe-top-container {
+  padding-top: calc(0.75rem + var(--safe-area-top));
+  padding-bottom: 0.75rem;
+}
+
+.safe-bottom-nav {
+  padding-bottom: calc(0.35rem + var(--safe-area-bottom));
+}
+
+.safe-bottom-floating {
+  padding-bottom: calc(0.35rem + var(--safe-area-bottom));
+}
+
+@media (min-width: 640px) {
+  .app-content-container {
+    padding-inline-start: max(1.5rem, var(--safe-area-left));
+    padding-inline-end: max(1.5rem, var(--safe-area-right));
+  }
+}
+
+@media (min-width: 1024px) {
+  .app-page-shell {
+    padding-bottom: 6.2rem;
+  }
+
+  .safe-top-container {
+    padding-top: 1rem;
+  }
+
+  .safe-bottom-nav {
+    padding-bottom: 0.9rem;
+  }
+
+  .safe-bottom-floating {
+    padding-bottom: 0.9rem;
+  }
 }
 

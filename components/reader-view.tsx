@@ -97,9 +97,9 @@ export function ReaderView({ article, related }: ReaderViewProps): JSX.Element {
   };
 
   return (
-    <div className="relative min-h-screen bg-background-light pb-28 dark:bg-[#070f1c]">
+    <div className="app-page-shell app-page-shell-reader bg-background-light dark:bg-[#070f1c]">
       <header className="sticky top-0 z-30 border-b border-border-light bg-background-light/90 backdrop-blur dark:border-[#1d283d] dark:bg-[#081120]/90">
-        <div className="mx-auto flex w-full max-w-3xl items-center justify-between px-4 py-3 sm:px-6">
+        <div className="app-content-container safe-top-container flex items-center justify-between">
           <button
             type="button"
             aria-label="Go back"
@@ -119,7 +119,7 @@ export function ReaderView({ article, related }: ReaderViewProps): JSX.Element {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-3xl space-y-6 px-4 py-4 sm:px-6">
+      <main className="app-content-container grid gap-6 py-4 xl:grid-cols-[minmax(0,1.35fr)_minmax(300px,0.65fr)] xl:items-start xl:py-6">
         <article className="overflow-hidden rounded-3xl border border-border-light bg-background-light shadow-soft dark:border-[#223148] dark:bg-[#10192c]">
           <div className="aspect-[16/9] w-full overflow-hidden bg-background-subtle dark:bg-[#17233a]">
             <img
@@ -135,7 +135,7 @@ export function ReaderView({ article, related }: ReaderViewProps): JSX.Element {
                 {article.category ?? "Top"}
               </span>
               <span>{article.source}</span>
-              <span>•</span>
+              <span>-</span>
               <span>{formatDate(article.publishedAt)}</span>
             </div>
 
@@ -175,7 +175,7 @@ export function ReaderView({ article, related }: ReaderViewProps): JSX.Element {
           </div>
         </article>
 
-        <section>
+        <section className="xl:sticky xl:top-28">
           <h2 className="mb-3 text-lg font-semibold text-text-main dark:text-[#ebf2ff]">
             Read next
           </h2>
@@ -198,7 +198,7 @@ export function ReaderView({ article, related }: ReaderViewProps): JSX.Element {
         </section>
       </main>
 
-      <div className="fixed inset-x-0 bottom-3 z-40 px-4">
+      <div className="safe-bottom-floating fixed inset-x-0 bottom-0 z-40 px-4">
         <div className="mx-auto flex w-full max-w-md items-center justify-between rounded-2xl border border-border-light bg-background-light/95 px-3 py-2 shadow-soft backdrop-blur dark:border-[#223148] dark:bg-[#0d1728]/95">
           <button
             type="button"

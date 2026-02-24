@@ -78,9 +78,9 @@ export function SearchScreen(): JSX.Element {
   }, [query, loading, error, items.length, country]);
 
   return (
-    <div className="relative min-h-screen pb-24">
+    <div className="app-page-shell">
       <header className="sticky top-0 z-30 border-b border-border-light bg-background-light/90 backdrop-blur dark:border-[#1d283d] dark:bg-[#081120]/90">
-        <div className="mx-auto w-full max-w-3xl px-4 py-3 sm:px-6">
+        <div className="app-content-container safe-top-container">
           <div className="mb-3 flex items-center justify-between">
             <h1 className="text-xl font-bold text-text-main dark:text-[#eaf2ff]">Search</h1>
             <Link
@@ -106,10 +106,10 @@ export function SearchScreen(): JSX.Element {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-3xl space-y-4 px-4 py-4 sm:px-6">
+      <main className="app-content-container space-y-4 py-4 lg:py-6">
         <p className="text-sm text-text-muted dark:text-[#8fa8d2]">{resultLabel}</p>
 
-        <section className="space-y-3">
+        <section className="grid gap-3 md:grid-cols-2 2xl:grid-cols-3">
           {items.map((article) => (
             <ArticleListCard key={article.id} article={article} />
           ))}

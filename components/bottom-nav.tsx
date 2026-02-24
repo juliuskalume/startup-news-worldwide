@@ -17,8 +17,8 @@ export function BottomNav(): JSX.Element {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border-light bg-background-light/95 backdrop-blur dark:border-[#1d283d] dark:bg-[#081120]/95">
-      <div className="mx-auto w-full max-w-3xl px-2 pb-2 pt-1 sm:px-4">
+    <nav className="safe-bottom-nav fixed inset-x-0 bottom-0 z-40 px-3 lg:px-5">
+      <div className="mx-auto w-full max-w-2xl rounded-3xl border border-border-light bg-background-light/95 px-2 pb-2 pt-1 shadow-soft backdrop-blur dark:border-[#1d283d] dark:bg-[#081120]/95 sm:px-4">
         <ul className="grid grid-cols-5 gap-1">
           {NAV_ITEMS.map((item) => {
             const active = pathname === item.href;

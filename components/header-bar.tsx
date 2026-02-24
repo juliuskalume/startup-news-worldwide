@@ -27,10 +27,14 @@ export function HeaderBar({
 
   return (
     <header className="sticky top-0 z-30 border-b border-border-light bg-background-light/90 backdrop-blur-lg dark:border-[#1d283d] dark:bg-[#081120]/90">
-      <div className="mx-auto flex w-full max-w-3xl items-center justify-between px-4 py-3 sm:px-6">
+      <div className="app-content-container safe-top-container flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-primary text-sm font-bold text-white shadow-card">
-            SN
+          <div className="h-11 w-11 overflow-hidden rounded-2xl border border-primary/20 bg-background-light shadow-card">
+            <img
+              src="/app-logo.png"
+              alt="Startup News Worldwide logo"
+              className="h-full w-full object-cover"
+            />
           </div>
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">

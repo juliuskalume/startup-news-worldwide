@@ -73,7 +73,7 @@ export function HomeFeed(): JSX.Element {
   const latestItems = useMemo(() => items.slice(1), [items]);
 
   return (
-    <div className="relative min-h-screen pb-24">
+    <div className="app-page-shell">
       <HeaderBar
         country={country}
         onCountryClick={() => setCountryModalOpen(true)}
@@ -95,12 +95,15 @@ export function HomeFeed(): JSX.Element {
         }}
       />
 
-      <main className="mx-auto w-full max-w-3xl space-y-5 px-4 py-4 sm:px-6">
+      <main className="app-content-container space-y-5 py-4 lg:space-y-6 lg:py-6">
         {loading ? (
           <>
-            <SkeletonCard hero />
-            <div className="space-y-3">
-              {Array.from({ length: 6 }).map((_, index) => (
+            <div className="grid gap-4 xl:grid-cols-[1.35fr_0.95fr]">
+              <SkeletonCard hero />
+              <SkeletonCard hero />
+            </div>
+            <div className="grid gap-3 md:grid-cols-2 2xl:grid-cols-3">
+              {Array.from({ length: 9 }).map((_, index) => (
                 <SkeletonCard key={index} />
               ))}
             </div>
@@ -125,9 +128,14 @@ export function HomeFeed(): JSX.Element {
 
         {!loading && !error && hero ? (
           <>
-            <HeroArticleCard article={hero} />
-
-            <TrendingHorizontalRail items={items} />
+            <section className="grid gap-4 xl:grid-cols-[1.35fr_0.95fr]">
+              <div className="animate-riseIn">
+                <HeroArticleCard article={hero} />
+              </div>
+              <div className="animate-riseIn [animation-delay:100ms]">
+                <TrendingHorizontalRail items={items} />
+              </div>
+            </section>
 
             <section>
               <div className="mb-3 flex items-end justify-between">
@@ -139,9 +147,15 @@ export function HomeFeed(): JSX.Element {
                 </span>
               </div>
 
-              <div className="space-y-3">
-                {latestItems.map((article) => (
-                  <ArticleListCard key={article.id} article={article} />
+              <div className="grid gap-3 md:grid-cols-2 2xl:grid-cols-3">
+                {latestItems.map((article, index) => (
+                  <div
+                    key={article.id}
+                    className="animate-riseIn"
+                    style={{ animationDelay: `${Math.min(index, 12) * 45}ms` }}
+                  >
+                    <ArticleListCard article={article} />
+                  </div>
                 ))}
               </div>
             </section>
