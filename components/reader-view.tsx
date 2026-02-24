@@ -27,7 +27,7 @@ const BODY_SIZE_CLASSES = [
 ] as const;
 
 function buildParagraphs(article: Article): string[] {
-  const excerpt = article.excerpt;
+  const excerpt = article.excerpt?trim();
 
   if (!excerpt) {
     return [
