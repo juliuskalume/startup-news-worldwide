@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { MaterialIcon } from "@/components/material-icon";
 import { useNavigationLoader } from "@/components/providers/navigation-loader-provider";
-import { getDisplayImageUrl } from "@/lib/image";
+import { buildPlaceholderUrl, getDisplayImageUrl } from "@/lib/image";
 import { Article } from "@/lib/types";
 import { buildArticleHref, formatRelativeTime } from "@/lib/utils";
 
@@ -17,6 +17,7 @@ export function ArticleListCard({
   onRemove,
 }: ArticleListCardProps): JSX.Element {
   const imageSrc = getDisplayImageUrl(article.imageUrl, article.title);
+  const fallbackImage = buildPlaceholderUrl(article.title);
   const { handleArticleClick } = useNavigationLoader();
 
   return (
@@ -56,6 +57,13 @@ export function ArticleListCard({
               alt={article.title}
               className="h-full w-full object-cover"
               loading="lazy"
+              onError={(event) => {
+                if (event.currentTarget.dataset.fallbackApplied === "true") {
+                  return;
+                }
+                event.currentTarget.dataset.fallbackApplied = "true";
+                event.currentTarget.src = fallbackImage;
+              }}
             />
           </div>
         </Link>

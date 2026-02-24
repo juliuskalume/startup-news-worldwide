@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MaterialIcon } from "@/components/material-icon";
 import { useNavigationLoader } from "@/components/providers/navigation-loader-provider";
-import { getDisplayImageUrl } from "@/lib/image";
+import { buildPlaceholderUrl, getDisplayImageUrl } from "@/lib/image";
 import {
   getReaderTextSize,
   isSavedArticle,
@@ -47,13 +47,23 @@ function buildParagraphs(article: Article): string[] {
 
 export function ReaderView({ article, related }: ReaderViewProps): JSX.Element {
   const router = useRouter();
-  const { handleArticleClick } = useNavigationLoader();
+  const { handleArticleClick, startLoading, stopLoading } = useNavigationLoader();
   const [textSize, setTextSize] = useState<number>(getReaderTextSize());
   const [saved, setSaved] = useState<boolean>(isSavedArticle(article.id));
   const [shareHint, setShareHint] = useState<string>("");
+  const sourceLoadTimeoutRef = useRef<number | null>(null);
 
   const paragraphs = useMemo(() => buildParagraphs(article), [article]);
   const imageSrc = getDisplayImageUrl(article.imageUrl, article.title);
+  const fallbackImage = buildPlaceholderUrl(article.title);
+
+  useEffect(() => {
+    return () => {
+      if (sourceLoadTimeoutRef.current) {
+        window.clearTimeout(sourceLoadTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const onIncreaseSize = (): void => {
     setTextSize((current) => {
@@ -98,6 +108,19 @@ export function ReaderView({ article, related }: ReaderViewProps): JSX.Element {
     }
   };
 
+  const onOpenOriginalSource = (): void => {
+    startLoading();
+
+    if (sourceLoadTimeoutRef.current) {
+      window.clearTimeout(sourceLoadTimeoutRef.current);
+    }
+
+    sourceLoadTimeoutRef.current = window.setTimeout(() => {
+      stopLoading();
+      sourceLoadTimeoutRef.current = null;
+    }, 1800);
+  };
+
   return (
     <div className="app-page-shell app-page-shell-reader bg-background-light dark:bg-[#070f1c]">
       <header className="sticky top-0 z-30 border-b border-border-light bg-background-light/90 backdrop-blur dark:border-[#1d283d] dark:bg-[#081120]/90">
@@ -128,6 +151,13 @@ export function ReaderView({ article, related }: ReaderViewProps): JSX.Element {
               src={imageSrc}
               alt={article.title}
               className="h-full w-full object-cover"
+              onError={(event) => {
+                if (event.currentTarget.dataset.fallbackApplied === "true") {
+                  return;
+                }
+                event.currentTarget.dataset.fallbackApplied = "true";
+                event.currentTarget.src = fallbackImage;
+              }}
             />
           </div>
 
@@ -169,6 +199,7 @@ export function ReaderView({ article, related }: ReaderViewProps): JSX.Element {
                 href={article.link}
                 target="_blank"
                 rel="noreferrer"
+                onClick={onOpenOriginalSource}
                 className="focus-ring rounded-full border border-border-light px-3 py-1 text-xs font-semibold text-primary dark:border-[#2b3953]"
               >
                 Original source

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useNavigationLoader } from "@/components/providers/navigation-loader-provider";
-import { getDisplayImageUrl } from "@/lib/image";
+import { buildPlaceholderUrl, getDisplayImageUrl } from "@/lib/image";
 import { Article } from "@/lib/types";
 import { buildArticleHref, formatDate, formatRelativeTime } from "@/lib/utils";
 
@@ -12,6 +12,7 @@ type HeroArticleCardProps = {
 
 export function HeroArticleCard({ article }: HeroArticleCardProps): JSX.Element {
   const imageSrc = getDisplayImageUrl(article.imageUrl, article.title);
+  const fallbackImage = buildPlaceholderUrl(article.title);
   const { handleArticleClick } = useNavigationLoader();
 
   return (
@@ -26,6 +27,13 @@ export function HeroArticleCard({ article }: HeroArticleCardProps): JSX.Element 
           alt={article.title}
           className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]"
           loading="lazy"
+          onError={(event) => {
+            if (event.currentTarget.dataset.fallbackApplied === "true") {
+              return;
+            }
+            event.currentTarget.dataset.fallbackApplied = "true";
+            event.currentTarget.src = fallbackImage;
+          }}
         />
 
         <div className="absolute inset-x-0 top-0 flex items-center justify-between p-2.5 sm:p-3">

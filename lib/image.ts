@@ -1,4 +1,6 @@
 const REMOTE_IMAGE_RE = /^https?:\/\//i;
+const HTTPS_IMAGE_RE = /^https:\/\//i;
+const HTTP_IMAGE_RE = /^http:\/\//i;
 
 export function buildImageProxyUrl(url: string): string {
   return `/api/image?url=${encodeURIComponent(url)}`;
@@ -25,9 +27,14 @@ export function getDisplayImageUrl(
   }
 
   if (REMOTE_IMAGE_RE.test(imageUrl)) {
-    return buildImageProxyUrl(imageUrl);
+    if (HTTPS_IMAGE_RE.test(imageUrl)) {
+      return imageUrl;
+    }
+
+    if (HTTP_IMAGE_RE.test(imageUrl)) {
+      return buildImageProxyUrl(imageUrl);
+    }
   }
 
   return buildPlaceholderUrl(title);
 }
-
