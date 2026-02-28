@@ -10,7 +10,9 @@ export type CountryCode =
   | "BR"
   | "CA"
   | "AU"
-  | "JP";
+  | "JP"
+  | "ZA"
+  | "MA";
 
 export type Category =
   | "Top"
@@ -51,6 +53,8 @@ export const COUNTRY_CODES = [
   "CA",
   "AU",
   "JP",
+  "ZA",
+  "MA",
 ] as const satisfies readonly CountryCode[];
 
 export const CATEGORIES = [
@@ -86,6 +90,8 @@ export const COUNTRY_META: Record<CountryCode, { name: string; flag: string }> =
   CA: { name: "Canada", flag: "CA" },
   AU: { name: "Australia", flag: "AU" },
   JP: { name: "Japan", flag: "JP" },
+  ZA: { name: "South Africa", flag: "ZA" },
+  MA: { name: "Morocco", flag: "MA" },
 };
 
 export const CATEGORY_LABELS: Record<Category, string> = {
