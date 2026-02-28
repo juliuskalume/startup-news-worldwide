@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace = "com.startupnews.worldwide"
+    namespace = "com.sentirax.news"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.startupnews.worldwide"
+        applicationId "com.sentirax.news"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

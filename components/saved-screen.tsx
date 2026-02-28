@@ -3,7 +3,13 @@
 import { useEffect, useState } from "react";
 import { ArticleListCard } from "@/components/article-list-card";
 import { BottomNav } from "@/components/bottom-nav";
-import { getSavedArticles, removeSavedArticle } from "@/lib/storage";
+import {
+  getSavedArticles,
+  removeSavedArticle,
+  STORAGE_SYNC_EVENT,
+  storageKeys,
+  StorageSyncEventDetail,
+} from "@/lib/storage";
 import { Article } from "@/lib/types";
 
 export function SavedScreen(): JSX.Element {
@@ -16,12 +22,24 @@ export function SavedScreen(): JSX.Element {
       setItems(getSavedArticles());
     };
 
+    const syncFromStorageEvent = (event: Event): void => {
+      const customEvent = event as CustomEvent<StorageSyncEventDetail>;
+      const detail = customEvent.detail;
+      if (!detail?.keys.includes(storageKeys.saved)) {
+        return;
+      }
+
+      sync();
+    };
+
     window.addEventListener("storage", sync);
     window.addEventListener("focus", sync);
+    window.addEventListener(STORAGE_SYNC_EVENT, syncFromStorageEvent as EventListener);
 
     return () => {
       window.removeEventListener("storage", sync);
       window.removeEventListener("focus", sync);
+      window.removeEventListener(STORAGE_SYNC_EVENT, syncFromStorageEvent as EventListener);
     };
   }, []);
 

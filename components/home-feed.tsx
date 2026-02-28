@@ -10,7 +10,13 @@ import { HeaderBar } from "@/components/header-bar";
 import { HeroArticleCard } from "@/components/hero-article-card";
 import { SkeletonCard } from "@/components/skeleton-card";
 import { TrendingHorizontalRail } from "@/components/trending-horizontal-rail";
-import { setStoredCountry, getStoredCountry } from "@/lib/storage";
+import {
+  setStoredCountry,
+  getStoredCountry,
+  STORAGE_SYNC_EVENT,
+  storageKeys,
+  StorageSyncEventDetail,
+} from "@/lib/storage";
 import {
   Article,
   Category,
@@ -60,6 +66,24 @@ export function HomeFeed(): JSX.Element {
 
   useEffect(() => {
     setCountry(getStoredCountry("US"));
+  }, []);
+
+  useEffect(() => {
+    const handleStorageSync = (event: Event): void => {
+      const customEvent = event as CustomEvent<StorageSyncEventDetail>;
+      const detail = customEvent.detail;
+      if (!detail?.keys.includes(storageKeys.country)) {
+        return;
+      }
+
+      const nextCountry = getStoredCountry("US");
+      setCountry((current) => (current === nextCountry ? current : nextCountry));
+    };
+
+    window.addEventListener(STORAGE_SYNC_EVENT, handleStorageSync as EventListener);
+    return () => {
+      window.removeEventListener(STORAGE_SYNC_EVENT, handleStorageSync as EventListener);
+    };
   }, []);
 
   useEffect(() => {

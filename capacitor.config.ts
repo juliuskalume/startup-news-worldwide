@@ -5,7 +5,7 @@ const serverUrl =
   "https://news.sentirax.com";
 
 const config: CapacitorConfig = {
-  appId: "com.startupnews.worldwide",
+  appId: "com.sentirax.news",
   appName: "Startup News Worldwide",
   webDir: "out",
   server: {

@@ -1,4 +1,4 @@
-package com.startupnews.worldwide;
+package com.sentirax.news;
 
 import android.graphics.Color;
 import android.net.Uri;

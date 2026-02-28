@@ -1,9 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Merriweather } from "next/font/google";
 import "./globals.css";
+import { AuthGate } from "@/components/auth-gate";
+import { AuthProvider } from "@/components/providers/auth-provider";
 import { HapticsProvider } from "@/components/providers/haptics-provider";
 import { NavigationLoaderProvider } from "@/components/providers/navigation-loader-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { UserSyncProvider } from "@/components/providers/user-sync-provider";
 import { ThemeScript } from "@/components/theme-script";
 
 const inter = Inter({
@@ -67,7 +70,13 @@ export default function RootLayout({
       <body className="font-sans text-text-main antialiased">
         <ThemeProvider>
           <HapticsProvider>
-            <NavigationLoaderProvider>{children}</NavigationLoaderProvider>
+            <NavigationLoaderProvider>
+              <AuthProvider>
+                <UserSyncProvider>
+                  <AuthGate>{children}</AuthGate>
+                </UserSyncProvider>
+              </AuthProvider>
+            </NavigationLoaderProvider>
           </HapticsProvider>
         </ThemeProvider>
       </body>

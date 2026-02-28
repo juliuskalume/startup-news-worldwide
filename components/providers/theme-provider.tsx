@@ -9,7 +9,13 @@ import {
   type PropsWithChildren,
 } from "react";
 import { ThemePreference } from "@/lib/types";
-import { getStoredTheme, setStoredTheme } from "@/lib/storage";
+import {
+  getStoredTheme,
+  setStoredTheme,
+  STORAGE_SYNC_EVENT,
+  storageKeys,
+  StorageSyncEventDetail,
+} from "@/lib/storage";
 
 type ResolvedTheme = "light" | "dark";
 
@@ -78,6 +84,24 @@ export function ThemeProvider({ children }: PropsWithChildren): JSX.Element {
     media.addEventListener("change", listener);
     return () => media.removeEventListener("change", listener);
   }, [theme]);
+
+  useEffect(() => {
+    const handleStorageSync = (event: Event): void => {
+      const customEvent = event as CustomEvent<StorageSyncEventDetail>;
+      const detail = customEvent.detail;
+      if (!detail?.keys.includes(storageKeys.theme)) {
+        return;
+      }
+
+      const nextTheme = getStoredTheme();
+      setTheme((current) => (current === nextTheme ? current : nextTheme));
+    };
+
+    window.addEventListener(STORAGE_SYNC_EVENT, handleStorageSync as EventListener);
+    return () => {
+      window.removeEventListener(STORAGE_SYNC_EVENT, handleStorageSync as EventListener);
+    };
+  }, []);
 
   const value = useMemo<ThemeContextValue>(() => {
     return {

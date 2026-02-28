@@ -9,6 +9,9 @@ import { buildPlaceholderUrl, getDisplayImageUrl } from "@/lib/image";
 import {
   getReaderTextSize,
   isSavedArticle,
+  STORAGE_SYNC_EVENT,
+  storageKeys,
+  StorageSyncEventDetail,
   setReaderTextSize,
   toggleSavedArticle,
 } from "@/lib/storage";
@@ -64,6 +67,29 @@ export function ReaderView({ article, related }: ReaderViewProps): JSX.Element {
       }
     };
   }, []);
+
+  useEffect(() => {
+    const handleStorageSync = (event: Event): void => {
+      const customEvent = event as CustomEvent<StorageSyncEventDetail>;
+      const detail = customEvent.detail;
+      if (!detail) {
+        return;
+      }
+
+      if (detail.keys.includes(storageKeys.readerSize)) {
+        setTextSize(getReaderTextSize());
+      }
+
+      if (detail.keys.includes(storageKeys.saved)) {
+        setSaved(isSavedArticle(article.id));
+      }
+    };
+
+    window.addEventListener(STORAGE_SYNC_EVENT, handleStorageSync as EventListener);
+    return () => {
+      window.removeEventListener(STORAGE_SYNC_EVENT, handleStorageSync as EventListener);
+    };
+  }, [article.id]);
 
   const onIncreaseSize = (): void => {
     setTextSize((current) => {

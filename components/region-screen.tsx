@@ -1,9 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { BottomNav } from "@/components/bottom-nav";
 import { CountryCode, COUNTRY_CODES, COUNTRY_META } from "@/lib/types";
-import { getStoredCountry, setStoredCountry } from "@/lib/storage";
+import {
+  getStoredCountry,
+  setStoredCountry,
+  STORAGE_SYNC_EVENT,
+  storageKeys,
+  StorageSyncEventDetail,
+} from "@/lib/storage";
 import { cn } from "@/lib/utils";
 
 function flagEmoji(countryFlagCode: string): string {
@@ -17,6 +23,24 @@ function flagEmoji(countryFlagCode: string): string {
 export function RegionScreen(): JSX.Element {
   const [selected, setSelected] = useState<CountryCode>(getStoredCountry("US"));
   const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    const handleStorageSync = (event: Event): void => {
+      const customEvent = event as CustomEvent<StorageSyncEventDetail>;
+      const detail = customEvent.detail;
+      if (!detail?.keys.includes(storageKeys.country)) {
+        return;
+      }
+
+      const nextCountry = getStoredCountry("US");
+      setSelected((current) => (current === nextCountry ? current : nextCountry));
+    };
+
+    window.addEventListener(STORAGE_SYNC_EVENT, handleStorageSync as EventListener);
+    return () => {
+      window.removeEventListener(STORAGE_SYNC_EVENT, handleStorageSync as EventListener);
+    };
+  }, []);
 
   const filtered = useMemo(() => {
     const clean = search.trim().toLowerCase();

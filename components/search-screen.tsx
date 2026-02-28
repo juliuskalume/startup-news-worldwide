@@ -6,7 +6,12 @@ import { ArticleListCard } from "@/components/article-list-card";
 import { BottomNav } from "@/components/bottom-nav";
 import { MaterialIcon } from "@/components/material-icon";
 import { Article, CountryCode } from "@/lib/types";
-import { getStoredCountry } from "@/lib/storage";
+import {
+  getStoredCountry,
+  STORAGE_SYNC_EVENT,
+  storageKeys,
+  StorageSyncEventDetail,
+} from "@/lib/storage";
 
 type SearchResponse = {
   country: CountryCode;
@@ -23,6 +28,24 @@ export function SearchScreen(): JSX.Element {
 
   useEffect(() => {
     setCountry(getStoredCountry("US"));
+  }, []);
+
+  useEffect(() => {
+    const handleStorageSync = (event: Event): void => {
+      const customEvent = event as CustomEvent<StorageSyncEventDetail>;
+      const detail = customEvent.detail;
+      if (!detail?.keys.includes(storageKeys.country)) {
+        return;
+      }
+
+      const nextCountry = getStoredCountry("US");
+      setCountry((current) => (current === nextCountry ? current : nextCountry));
+    };
+
+    window.addEventListener(STORAGE_SYNC_EVENT, handleStorageSync as EventListener);
+    return () => {
+      window.removeEventListener(STORAGE_SYNC_EVENT, handleStorageSync as EventListener);
+    };
   }, []);
 
   useEffect(() => {
