@@ -30,22 +30,39 @@ const BODY_SIZE_CLASSES = [
 ] as const;
 
 function buildParagraphs(article: Article): string[] {
-  const excerpt = article.excerpt?.trim();
+  const excerpt = article.excerpt?.replace(/\s+/g, " ").trim();
 
   if (!excerpt) {
     return [
-      `${article.title} is one of the latest stories in startup and technology news across ${article.country ?? "global markets"}.`,
-      `This reader view is optimized for quick scanning, saved bookmarks, and sharing. Open the source link for full original reporting and context from ${article.source}.`,
-      `As more publishers are added to the feed map, this page can surface richer story text, insights, and related recommendations.`
+      `Full article text is not available in this feed item. Open the original source for complete reporting from ${article.source}.`,
     ];
   }
 
-  const firstChunk = excerpt;
-  return [
-    firstChunk,
-    `Published by ${article.source} on ${formatDate(article.publishedAt)}, this story highlights current developments in ${article.category ?? "startup"} news.`,
-    "For complete details, factual nuance, and updates, continue reading on the original publisher website through the source link."
-  ];
+  const sentences =
+    excerpt.match(/[^.!?]+[.!?]+|[^.!?]+$/g)?.map((entry) => entry.trim()) ?? [excerpt];
+  if (sentences.length <= 2) {
+    return [excerpt];
+  }
+
+  const paragraphs: string[] = [];
+  let current = "";
+
+  for (const sentence of sentences) {
+    const next = current ? `${current} ${sentence}` : sentence;
+    if (next.length > 540 && current) {
+      paragraphs.push(current);
+      current = sentence;
+      continue;
+    }
+
+    current = next;
+  }
+
+  if (current) {
+    paragraphs.push(current);
+  }
+
+  return paragraphs.length ? paragraphs : [excerpt];
 }
 
 export function ReaderView({ article, related }: ReaderViewProps): JSX.Element {

@@ -168,22 +168,28 @@ function extractSource(item: RawItem, link: string): { source: string; title: st
 }
 
 function cleanExcerpt(item: RawItem): string | undefined {
-  const candidate =
-    asString(item.contentSnippet) ??
-    asString(item.summary) ??
-    asString(item.description) ??
-    asString(item.content);
+  const candidates = [
+    asString(item["content:encoded"]),
+    asString(item.content),
+    asString(item.summary),
+    asString(item.description),
+    asString(item.contentSnippet),
+  ].filter((value): value is string => Boolean(value));
 
-  if (!candidate) {
+  if (!candidates.length) {
     return undefined;
   }
 
-  const plain = stripHtml(candidate);
-  if (!plain.length) {
-    return undefined;
+  // Prefer the richest text block so reader view can show the full available content.
+  let bestPlain = "";
+  for (const candidate of candidates) {
+    const plain = stripHtml(candidate);
+    if (plain.length > bestPlain.length) {
+      bestPlain = plain;
+    }
   }
 
-  return plain.slice(0, 280);
+  return bestPlain.length ? bestPlain : undefined;
 }
 
 function estimateReadTime(item: RawItem): number | undefined {
