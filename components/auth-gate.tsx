@@ -12,6 +12,14 @@ type AuthMode = "signin" | "signup";
 const PASSWORD_MIN_LENGTH = 6;
 const PUBLIC_AUTH_EXEMPT_ROUTES = new Set(["/", "/terms", "/privacy"]);
 
+function isPublicRoute(pathname: string): boolean {
+  if (PUBLIC_AUTH_EXEMPT_ROUTES.has(pathname)) {
+    return true;
+  }
+
+  return pathname.startsWith("/article/");
+}
+
 export function AuthGate({ children }: PropsWithChildren): JSX.Element {
   const pathname = usePathname();
   const {
@@ -33,7 +41,7 @@ export function AuthGate({ children }: PropsWithChildren): JSX.Element {
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
   const [error, setError] = useState<string>("");
-  const isAuthExemptRoute = PUBLIC_AUTH_EXEMPT_ROUTES.has(pathname);
+  const isAuthExemptRoute = isPublicRoute(pathname);
 
   const clearFeedback = (): void => {
     setMessage("");
