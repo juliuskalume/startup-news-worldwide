@@ -9,14 +9,18 @@ import {
   useState,
   type PropsWithChildren,
 } from "react";
+import { Capacitor } from "@capacitor/core";
+import { FirebaseAuthentication } from "@capacitor-firebase/authentication";
 import type { User } from "firebase/auth";
 import {
   createUserWithEmailAndPassword,
   getRedirectResult,
+  GoogleAuthProvider,
   onAuthStateChanged,
   reload,
   sendEmailVerification,
   signInWithEmailAndPassword,
+  signInWithCredential,
   signInWithPopup,
   signInWithRedirect,
   signOut,
@@ -40,6 +44,7 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 type AuthErrorLike = {
   code?: string;
+  message?: string;
 };
 
 function mapAuthError(error: unknown): string {
@@ -76,6 +81,21 @@ function shouldFallbackToRedirect(error: unknown): boolean {
   );
 }
 
+function mapNativeGoogleError(error: unknown): string {
+  const code = ((error as AuthErrorLike)?.code ?? "").toLowerCase();
+  const message = ((error as AuthErrorLike)?.message ?? "").toLowerCase();
+
+  if (code.includes("cancel") || message.includes("cancel")) {
+    return "Google sign-in was cancelled.";
+  }
+
+  if (code.includes("network") || message.includes("network")) {
+    return "Network error. Check your connection and try again.";
+  }
+
+  return "Google sign-in failed. Please try again.";
+}
+
 export function AuthProvider({ children }: PropsWithChildren): JSX.Element {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -88,8 +108,10 @@ export function AuthProvider({ children }: PropsWithChildren): JSX.Element {
       setLoading(false);
     });
 
-    // Handle Google redirect flow on environments where popup is unsupported.
-    void getRedirectResult(auth).catch(() => undefined);
+    if (!Capacitor.isNativePlatform()) {
+      // Handle Google redirect flow on environments where popup is unsupported.
+      void getRedirectResult(auth).catch(() => undefined);
+    }
 
     return () => unsubscribe();
   }, []);
@@ -123,6 +145,26 @@ export function AuthProvider({ children }: PropsWithChildren): JSX.Element {
   );
 
   const signInWithGoogle = useCallback(async (): Promise<void> => {
+    if (Capacitor.isNativePlatform()) {
+      try {
+        const result = await FirebaseAuthentication.signInWithGoogle({
+          skipNativeAuth: true,
+        });
+
+        const idToken = result.credential?.idToken ?? null;
+        const accessToken = result.credential?.accessToken ?? null;
+        if (!idToken && !accessToken) {
+          throw new Error("Google sign-in did not return a usable credential.");
+        }
+
+        const credential = GoogleAuthProvider.credential(idToken, accessToken);
+        await signInWithCredential(auth, credential);
+        return;
+      } catch (error) {
+        throw new Error(mapNativeGoogleError(error));
+      }
+    }
+
     try {
       await signInWithPopup(auth, googleProvider);
     } catch (error) {
@@ -160,6 +202,10 @@ export function AuthProvider({ children }: PropsWithChildren): JSX.Element {
   }, []);
 
   const signOutUser = useCallback(async (): Promise<void> => {
+    if (Capacitor.isNativePlatform()) {
+      await FirebaseAuthentication.signOut().catch(() => undefined);
+    }
+
     await signOut(auth);
     setEmailVerified(false);
   }, []);

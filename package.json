@@ -13,6 +13,7 @@
     "android:dev": "npx cap run android -l --external"
   },
   "dependencies": {
+    "@capacitor-firebase/authentication": "^7.5.0",
     "@capacitor/android": "^8.1.0",
     "@capacitor/core": "^8.1.0",
     "@capacitor/haptics": "^8.0.1",
