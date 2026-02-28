@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 type AuthMode = "signin" | "signup";
 
 const PASSWORD_MIN_LENGTH = 6;
-const PUBLIC_AUTH_EXEMPT_ROUTES = new Set(["/terms", "/privacy"]);
+const PUBLIC_AUTH_EXEMPT_ROUTES = new Set(["/", "/terms", "/privacy"]);
 
 export function AuthGate({ children }: PropsWithChildren): JSX.Element {
   const pathname = usePathname();

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArticleListCard } from "@/components/article-list-card";
@@ -8,6 +9,7 @@ import { CategoryTabs } from "@/components/category-tabs";
 import { CountryPickerModal } from "@/components/country-picker-modal";
 import { HeaderBar } from "@/components/header-bar";
 import { HeroArticleCard } from "@/components/hero-article-card";
+import { useAuth } from "@/components/providers/auth-provider";
 import { SkeletonCard } from "@/components/skeleton-card";
 import { TrendingHorizontalRail } from "@/components/trending-horizontal-rail";
 import {
@@ -51,6 +53,7 @@ function getPageScrollTop(): number {
 
 export function HomeFeed(): JSX.Element {
   const router = useRouter();
+  const { user } = useAuth();
   const [country, setCountry] = useState<CountryCode>("US");
   const [category, setCategory] = useState<Category>("Top");
   const [items, setItems] = useState<Article[]>([]);
@@ -304,6 +307,54 @@ export function HomeFeed(): JSX.Element {
           transform: mainShiftY ? `translateY(${mainShiftY}px)` : undefined,
         }}
       >
+        <section className="animate-riseIn rounded-3xl border border-border-light bg-background-light p-5 shadow-soft dark:border-[#223148] dark:bg-[#10192c]">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="max-w-3xl">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
+                App Purpose
+              </p>
+              <h1 className="mt-1 text-xl font-bold text-text-main dark:text-[#edf3ff]">
+                Startup News Worldwide helps you follow global startup, tech, and business news in one place.
+              </h1>
+              <p className="mt-2 text-sm leading-6 text-text-muted dark:text-[#8ea6cf]">
+                We aggregate headlines from trusted public sources by region and category,
+                and provide reader-friendly browsing, search, and bookmarking.
+              </p>
+            </div>
+            {!user ? (
+              <Link
+                href="/profile"
+                className="focus-ring inline-flex items-center justify-center rounded-2xl bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:brightness-95"
+              >
+                Sign in to sync
+              </Link>
+            ) : null}
+          </div>
+
+          <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm text-text-muted dark:text-[#8ea6cf]">
+            <li>Read worldwide startup and technology updates by country and category.</li>
+            <li>Save articles and personalize your region, theme, and reader text size.</li>
+            <li>
+              If you sign in with Google or email, we use your account only for authentication and optional cloud sync of your preferences.
+            </li>
+          </ul>
+
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            <Link
+              href="/privacy"
+              className="focus-ring inline-flex items-center justify-center rounded-full border border-border-light px-3 py-1.5 text-xs font-semibold text-text-main transition hover:border-primary/40 dark:border-[#2b3953] dark:text-[#e7eefc]"
+            >
+              Privacy Policy
+            </Link>
+            <Link
+              href="/terms"
+              className="focus-ring inline-flex items-center justify-center rounded-full border border-border-light px-3 py-1.5 text-xs font-semibold text-text-main transition hover:border-primary/40 dark:border-[#2b3953] dark:text-[#e7eefc]"
+            >
+              Terms of Service
+            </Link>
+          </div>
+        </section>
+
         {loading ? (
           <>
             <div className="grid gap-4 xl:grid-cols-[1.35fr_0.95fr]">
